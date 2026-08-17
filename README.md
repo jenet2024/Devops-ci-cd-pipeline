@@ -71,3 +71,35 @@ h4ckr-devops/
 ├── screenshots/
 │
 └── README.md
+
+
+## Objectif DevOps
+Ce dépôt a pour but de :
+
+Centraliser l’architecture complète du projet
+
+Montrer une pipeline CI/CD fonctionnelle
+
+Illustrer une stack full DevOps
+
+Monter en compétences
+
+## À propos de l’auteure
+
+Jenet  
+
+Étudiante Bac+2 Informatique – Réseaux & Cybersécurité
+Préparation Bac+3 en alternance (Administrateur LAN / DevOps)
+Passionnée par :
+
+les architectures réseau
+
+la cybersécurité
+
+le DevOps
+
+les pipelines CI/CD
+
+Docker & FastAPI
+
+les projets techniques concrets

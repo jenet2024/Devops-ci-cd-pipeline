@@ -3,121 +3,79 @@ name: CI-CD Pipeline Ultra Complete
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
 
+  # ---------------------------
+  # BACKEND PIPELINE (colonne 1)
+  # ---------------------------
   tests-backend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - run: echo "Tests backend"
 
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          cd backend
-          pip install -r requirements.txt
-
-      - name: Run backend tests
-        run: echo "Running backend tests..."
-
-
-  tests-frontend:
+  lint-backend:
     runs-on: ubuntu-latest
     needs: tests-backend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm install
-
-      - name: Run frontend tests
-        run: echo "Running frontend tests..."
-
-
-  lint:
-    runs-on: ubuntu-latest
-    needs: tests-frontend
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Lint backend
-        run: echo "Lint backend..."
-
-      - name: Lint frontend
-        run: echo "Lint frontend..."
-
+      - uses: actions/checkout@v4
+      - run: echo "Lint backend"
 
   build-backend:
     runs-on: ubuntu-latest
-    needs: lint
+    needs: lint-backend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - run: docker build -t h4ckr-backend ./backend
 
-      - name: Build backend image
-        run: docker build -t h4ckr-backend ./backend
 
+  # ---------------------------
+  # FRONTEND PIPELINE (colonne 2)
+  # ---------------------------
+  tests-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Tests frontend"
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    needs: tests-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Lint frontend"
 
   build-frontend:
     runs-on: ubuntu-latest
-    needs: build-backend
+    needs: lint-frontend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build frontend image
-        run: docker build -t h4ckr-frontend ./frontend
+      - uses: actions/checkout@v4
+      - run: docker build -t h4ckr-frontend ./frontend
 
 
+  # ---------------------------
+  # MERGE DES DEUX PIPELINES
+  # ---------------------------
   docker-compose:
     runs-on: ubuntu-latest
-    needs: build-frontend
+    needs:
+      - build-backend
+      - build-frontend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Install docker-compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
-
-      - name: Run docker-compose
-        run: docker-compose up -d --build
+      - run: docker-compose up -d --build
 
 
-  push-dockerhub:
+  # ---------------------------
+  # DEPLOY
+  # ---------------------------
+  deploy:
     runs-on: ubuntu-latest
     needs: docker-compose
     steps:
-      - name: Login Docker Hub
-        run: echo "Login Docker Hub..."
-
-      - name: Push backend image
-        run: echo "Push backend image..."
-
-      - name: Push frontend image
-        run: echo "Push frontend image..."
-
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: push-dockerhub
-    steps:
-      - name: Deploy
-        run: echo "Deploying to production..."
+      - run: echo "Deploying..."
