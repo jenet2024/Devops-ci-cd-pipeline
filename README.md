@@ -1,5 +1,6 @@
 ## Architecture globale du projet
 
+```mermaid
 flowchart LR
     subgraph Frontend
         A[React + Vite]
@@ -15,9 +16,11 @@ flowchart LR
 
     A --> B
     B --> C
-
+```
 
 ## 2. Architecture Docker
+
+```mermaid
 flowchart TD
     subgraph Docker
         F[Frontend Container]
@@ -27,9 +30,10 @@ flowchart TD
 
     F --> B
     B --> D
-
+```
 
 ## Pipeline CI/CD GitHub Actions
+```mermaid
 flowchart TD
     A[Push sur GitHub] --> B[GitHub Actions]
     B --> C[Build Backend Dockerfile]
@@ -42,7 +46,7 @@ flowchart TD
     G --> I[Frontend Container]
     G --> J[PostgreSQL Container]
 
-
+```
 ## 7. Structure du dépôt
 h4ckr-devops/
 │
