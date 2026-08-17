@@ -23,5 +23,10 @@ jobs:
       - name: Build frontend image
         run: docker build -t h4ckr-frontend ./frontend
 
+      - name: Install docker-compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
       - name: Run docker-compose
         run: docker-compose up -d --build
